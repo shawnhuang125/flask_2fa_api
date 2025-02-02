@@ -6,3 +6,5 @@ api_keys.json
 uploads/
 venv/
 myenv/
+upload_csv/
+upload_sql/
