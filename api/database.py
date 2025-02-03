@@ -13,9 +13,9 @@ os.makedirs(UPLOAD_FOLDER_CSV, exist_ok=True)
 os.makedirs(UPLOAD_FOLDER_SQL, exist_ok=True)
 
 def get_db_connection():
-    """
-    Establish a database connection and return the connection object or an error message.
-    """
+    
+    # Establish a database connection and return the connection object or an error message.
+    
     try:
         conn = mysql.connector.connect(
             host=Config.DB_HOST,
@@ -31,9 +31,9 @@ def get_db_connection():
         return None, f"Database connection failed: {err}"
 
 def escape_sql_string(value):
-    """
-    Escape special characters in SQL strings to prevent syntax errors.
-    """
+    
+    # Escape special characters in SQL strings to prevent syntax errors.
+    
     if pd.isnull(value) or value == '':
         return 'NULL'
     if isinstance(value, str):
@@ -44,9 +44,9 @@ def escape_sql_string(value):
     return value
 
 def convert_csv_to_sql(file_path, output_folder=UPLOAD_FOLDER_SQL):
-    """
-    Convert a CSV file to an SQL script file and save it to the specified folder.
-    """
+    
+    # Convert a CSV file to an SQL script file and save it to the specified folder.
+    
     try:
         df = pd.read_csv(file_path)
 
@@ -109,9 +109,9 @@ def convert_csv_to_sql(file_path, output_folder=UPLOAD_FOLDER_SQL):
         raise
 
 def import_sql_to_db(sql_file_path):
-    """
-    Import an SQL script file into the database.
-    """
+    
+    # Import an SQL script file into the database.
+    
     if not os.path.exists(sql_file_path):
         error_msg = f"SQL file {sql_file_path} does not exist, unable to import to the database."
         print(error_msg)
@@ -154,9 +154,9 @@ def import_sql_to_db(sql_file_path):
         conn.close()
 
 def main():
-    """
-    Main process for CSV conversion and SQL import.
-    """
+    
+    # Main process for CSV conversion and SQL import.
+    
     conn, error = get_db_connection()
     if not conn:
         print(error)

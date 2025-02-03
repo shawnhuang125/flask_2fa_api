@@ -13,9 +13,9 @@ os.makedirs(UPLOAD_FOLDER_SQL, exist_ok=True)
 os.makedirs(PROCESSED_FOLDER_CSV, exist_ok=True)
 
 def process_csv(file_path):
-    """
-    處理 CSV 檔案：將其轉換為 SQL 並匯入資料庫。
-    """
+    
+    # 處理 CSV 檔案：將其轉換為 SQL 並匯入資料庫。
+    
     try:
         print(f"開始轉換 CSV 檔案: {file_path}")
         
@@ -37,9 +37,9 @@ def process_csv(file_path):
         return {"error": f"CSV 解析失敗: {str(e)}"}, 500
 
 def move_processed_file(file_path):
-    """
-    將已處理的 CSV 檔案移動到 /processed_csv 資料夾。
-    """
+    
+    # 將已處理的 CSV 檔案移動到 /processed_csv 資料夾。
+    
     try:
         filename = os.path.basename(file_path)
         destination = os.path.join(PROCESSED_FOLDER_CSV, filename)

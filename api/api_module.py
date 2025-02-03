@@ -17,9 +17,9 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @api_blueprint.route('/create_api_user', methods=['POST'])
 def register_api_user():
-    """
-    註冊新的 API 使用者，並返回 API 金鑰。
-    """
+    
+    # 註冊新的 API 使用者，並返回 API 金鑰。
+    
     data = request.json
     username = data.get("username")
 
