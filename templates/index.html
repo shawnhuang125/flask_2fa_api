@@ -6,66 +6,59 @@
     <title>API Key Registration and Verification</title>
     <link rel="stylesheet" href="/static/style.css">
     <script>
-        function copyToClipboard() {
-            let keyElement = document.getElementById("api_key_display");
-            let copyButton = document.getElementById("copy_button");
-
-            if (keyElement) {
-                let textArea = document.createElement("textarea");
-                textArea.value = keyElement.textContent;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand("copy");
-                document.body.removeChild(textArea);
-
-                copyButton.innerText = "Copied!";
-                setTimeout(() => {
-                    copyButton.innerText = "Copy";
-                }, 2000);
-            }
-        }
-
         async function registerUser() {
-            let username = document.getElementById("username").value;
-            let resultDiv = document.getElementById("result");
+    let username = document.getElementById("username").value;
+    let password = document.getElementById("password").value;
+    let resultDiv = document.getElementById("result");
 
-            if (!username) {
-                resultDiv.innerHTML = "<p style='color: red;'>Please enter a username!</p>";
-                return;
-            }
+    if (!username || !password) {
+        resultDiv.innerHTML = "<p style='color: red;'>Please enter both username and password!</p>";
+        return;
+    }
 
-            let response = await fetch("/api/create_api_user", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ "username": username })
-            });
+    let response = await fetch("/api/create_api_user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ "username": username, "password": password })
+    });
 
-            let data = await response.json();
+    if (response.ok) {
+        resultDiv.innerHTML = `
+            <p style="color: green;">Registration successful!</p>
+            <button id="download_button" onclick="downloadToken('${username}')">Download Token</button>
+        `;
+    } else {
+        let data = await response.json();
+        resultDiv.innerHTML = `<p style='color: red;'>Error: ${data.error}</p>`;
+    }
+}
 
+
+        async function downloadToken(username) {
+            let response = await fetch(`/api/download_token/${username}`);
             if (response.ok) {
-                resultDiv.innerHTML = `
-                    <p>API Key: 
-                        <strong id="api_key_display" style="color: green;">${data.api_key}</strong> 
-                        <button id="copy_button" onclick="copyToClipboard()">Copy</button>
-                    </p>
-                `;
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'token.txt';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
             } else {
-                resultDiv.innerHTML = `<p style='color: red;'>Error: ${data.error}</p>`;
+                alert('Failed to download token!');
             }
         }
-
-        
     </script>
 </head>
 <body>
     <div class="card">
         <h2>API Key Registration</h2>
-        <input type="text" id="username" placeholder="Enter username">
+        <input type="text" id="username" placeholder="Enter username"><br><br>
+        <input type="password" id="password" placeholder="Enter password"><br><br>
         <button onclick="registerUser()">Register API Key</button>
         <div id="result"></div>
-
-        
-
     </div>
 </body>
 </html>

@@ -2,3 +2,5 @@ Flask
 python-dotenv
 Werkzeug
 flask-cors
+PyJWT
+cryptography
