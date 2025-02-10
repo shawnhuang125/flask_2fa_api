@@ -85,12 +85,20 @@ def create_api_user(username, password):
 
 def verify_api_key(api_key):
     api_keys = load_api_keys()
-    valid = any(user_data["api_key"] == api_key for user_data in api_keys.values())
+
+    # 只檢查字典型別的資料，忽略其他非字典資料
+    valid = any(
+        isinstance(user_data, dict) and user_data.get("api_key") == api_key
+        for user_data in api_keys.values()
+    )
+
     if valid:
         logger.info(f"API key verification successful for key: {api_key}")
     else:
         logger.warning(f"API key verification failed for key: {api_key}")
+    
     return valid
+
 
 def initialize_api_keys_from_env():
     api_keys = load_api_keys()
