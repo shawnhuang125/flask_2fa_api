@@ -2,7 +2,7 @@ import os
 import datetime
 from flask import Blueprint, request, jsonify, send_file
 from werkzeug.utils import secure_filename
-from api.auth import create_api_user, verify_api_key, initialize_api_keys_from_env
+from api.auth import create_api_user, verify_api_key, initialize_api_keys_from_env,verify_jwt_token  
 from api.logger import logger  # 導入日誌檔
 
 # 初始化 API 金鑰
@@ -18,7 +18,8 @@ def log_request_info():
 @api_blueprint.route('/create_api_user', methods=['POST'])
 def register_api_user():
     """
-    註冊新的 API 使用者，並返回 JWT Token，將 Token 儲存到 token.txt
+    註冊新的 API 使用者，並返回 JWT Token，將 Token 儲存到 token.txt，
+    並回傳 API Key 和 JWT Token 到前端
     """
     data = request.json
     username = data.get("username")
@@ -40,7 +41,14 @@ def register_api_user():
         token_file.write(token_content)
 
     logger.info(f"User '{username}' registered successfully.")
-    return jsonify({"message": "註冊成功"}), 201
+
+    # 保留原有註冊成功訊息，同時回傳 API Key 和 JWT Token 給前端
+    return jsonify({
+        "message": "註冊成功",
+        "api_key": response["api_key"],
+        "jwt_token": response["jwt_token"]
+    }), 201
+
 
 @api_blueprint.route('/download_token/<username>', methods=['GET'])
 def download_token(username):
@@ -68,3 +76,36 @@ def verify_key():
         logger.warning(f"API Key verification failed for key: {api_key}")
         return jsonify({"error": "API Key 無效"}), 401
 
+
+
+@api_blueprint.route('/verify_token', methods=['POST'])
+def verify_token():
+    """
+    驗證 JWT Token 是否有效，從請求 Header 中取得 Authorization Bearer Token。
+    """
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        logger.warning(f"Token verification failed: No valid Authorization header from {request.remote_addr}")
+        return jsonify({"error": "請提供有效的 Authorization Bearer Token"}), 400
+
+    token = auth_header.split(" ")[1]  # 提取 Token
+    result = verify_jwt_token(token)
+
+    if result["valid"]:
+        return jsonify({"message": "JWT Token 驗證成功", "username": result["username"]}), 200
+    else:
+        return jsonify({"error": result["error"]}), 401
+    
+
+
+@api_blueprint.route('/download_api_key/<username>', methods=['GET'])
+def download_api_key(username):
+    """
+    下載指定使用者的 API Key（api_key.txt）
+    """
+    api_key_file = f"{username}_api_key.txt"
+    if os.path.exists(api_key_file):
+        logger.info(f"API Key file for user '{username}' downloaded successfully.")
+        return send_file(api_key_file, as_attachment=True)
+    logger.warning(f"API Key file for user '{username}' not found.")
+    return jsonify({"error": "找不到 API Key 檔案"}), 404

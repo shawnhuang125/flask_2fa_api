@@ -79,8 +79,14 @@ def create_api_user(username, password):
     with open(f"{username}_token.txt", "w") as token_file:
         token_file.write(f"Username: {username}\nPassword: {password}\nJWT Token: {jwt_token}")
 
+    # 將 API Key 寫入本地檔案，供前端下載
+    with open(f"{username}_api_key.txt", "w") as api_key_file:
+        api_key_file.write(f"Username: {username}\nAPI Key: {api_key}")
+
     logger.info(f"User '{username}' registered successfully with API key and JWT token.")
     return {"api_key": api_key, "jwt_token": jwt_token}
+
+
 
 
 def verify_api_key(api_key):
@@ -109,3 +115,19 @@ def initialize_api_keys_from_env():
                 api_keys[username] = {"api_key": value}
     save_api_keys(api_keys)
     logger.info("API keys initialized from environment variables.")
+
+
+def verify_jwt_token(token):
+    """
+    驗證 JWT Token 是否有效，包括簽名和過期時間。
+    """
+    try:
+        decoded_token = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        logger.info(f"JWT token verification successful for user: {decoded_token['username']}")
+        return {"valid": True, "username": decoded_token["username"]}
+    except jwt.ExpiredSignatureError:
+        logger.warning("JWT token verification failed: Token has expired.")
+        return {"valid": False, "error": "Token 已過期"}
+    except jwt.InvalidTokenError:
+        logger.warning("JWT token verification failed: Invalid token.")
+        return {"valid": False, "error": "無效的 Token"}

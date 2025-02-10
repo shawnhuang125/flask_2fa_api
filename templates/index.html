@@ -5,34 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>API Key Registration and Verification</title>
     <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px; /* 新增間隙 */
+            margin-top: 20px;
+        }
+    </style>
     <script>
         async function registerUser() {
-    let username = document.getElementById("username").value;
-    let password = document.getElementById("password").value;
-    let resultDiv = document.getElementById("result");
+            let username = document.getElementById("username").value;
+            let password = document.getElementById("password").value;
+            let resultDiv = document.getElementById("result");
 
-    if (!username || !password) {
-        resultDiv.innerHTML = "<p style='color: red;'>Please enter both username and password!</p>";
-        return;
-    }
+            if (!username || !password) {
+                resultDiv.innerHTML = "<p style='color: red;'>Please enter both username and password!</p>";
+                return;
+            }
 
-    let response = await fetch("/api/create_api_user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ "username": username, "password": password })
-    });
+            let response = await fetch("/api/create_api_user", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ "username": username, "password": password })
+            });
 
-    if (response.ok) {
-        resultDiv.innerHTML = `
-            <p style="color: green;">Registration successful!</p>
-            <button id="download_button" onclick="downloadToken('${username}')">Download Token</button>
-        `;
-    } else {
-        let data = await response.json();
-        resultDiv.innerHTML = `<p style='color: red;'>Error: ${data.error}</p>`;
-    }
-}
-
+            if (response.ok) {
+                let data = await response.json();
+                localStorage.setItem("api_key", data.api_key);
+                localStorage.setItem("jwt_token", data.jwt_token);
+                resultDiv.innerHTML = `
+                    <p style="color: green;">Registration successful!</p>
+                    <button onclick="downloadToken('${username}')">Download Token</button>
+                    <button onclick="downloadApiKey('${username}')">Download API Key</button>
+                `;
+            } else {
+                let data = await response.json();
+                resultDiv.innerHTML = `<p style='color: red;'>Error: ${data.error}</p>`;
+            }
+        }
 
         async function downloadToken(username) {
             let response = await fetch(`/api/download_token/${username}`);
@@ -50,15 +62,92 @@
                 alert('Failed to download token!');
             }
         }
+
+        async function downloadApiKey(username) {
+            let response = await fetch(`/api/download_api_key/${username}`);
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'api_key.txt';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } else {
+                alert('Failed to download API key!');
+            }
+        }
+
+        async function verifyApiKey() {
+            let apiKey = document.getElementById("verify_api_key").value;
+            let apiKeyResultDiv = document.getElementById("verify_api_result");
+
+            let response = await fetch("/api/verify_key", {
+                method: "GET",
+                headers: { 'X-API-KEY': apiKey }
+            });
+
+            if (response.ok) {
+                apiKeyResultDiv.innerHTML = "<p style='color: green;'>API Key verification successful!</p>";
+            } else {
+                let data = await response.json();
+                apiKeyResultDiv.innerHTML = `<p style='color: red;'>Error: ${data.error}</p>`;
+            }
+        }
+
+        async function verifyToken() {
+    let token = document.getElementById("verify_token").value;
+    let tokenResultDiv = document.getElementById("verify_token_result");
+
+    let response = await fetch("/api/verify_token", {
+        method: "POST",
+        headers: { 
+            'Authorization': `Bearer ${token}`  // 將 token 放入 Authorization header
+        }
+    });
+
+    if (response.ok) {
+        tokenResultDiv.innerHTML = "<p style='color: green;'>Token verification successful!</p>";
+    } else {
+        let data = await response.json();
+        tokenResultDiv.innerHTML = `<p style='color: red;'>Error: ${data.error}</p>`;
+    }
+}
+
     </script>
 </head>
 <body>
-    <div class="card">
-        <h2>API Key Registration</h2>
-        <input type="text" id="username" placeholder="Enter username"><br><br>
-        <input type="password" id="password" placeholder="Enter password"><br><br>
-        <button onclick="registerUser()">Register API Key</button>
-        <div id="result"></div>
+    <div class="container">
+        <div class="card">
+            <h2>API Key Registration and Verification</h2>
+
+            <label for="username">Username:</label>
+            <input type="text" id="username" placeholder="Enter username"><br><br>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter password"><br><br>
+
+            <button onclick="registerUser()">Register API Key</button><br><br>
+            <div id="result"></div>
+        </div>
+
+        <div class="card">
+            <h2>API Key and Token Verification</h2>
+
+            <label for="verify_api_key">API Key:</label>
+            <input type="text" id="verify_api_key" placeholder="Enter API Key to verify"><br><br>
+
+            <button onclick="verifyApiKey()">Verify API Key</button><br><br>
+            <div id="verify_api_result"></div> <!-- API Key 驗證結果顯示 -->
+
+            <label for="verify_token">Token:</label>
+            <input type="text" id="verify_token" placeholder="Enter Token to verify"><br><br>
+
+            <button onclick="verifyToken()">Verify Token</button>
+            <div id="verify_token_result"></div> <!-- Token 驗證結果顯示 -->
+        </div>
     </div>
 </body>
 </html>

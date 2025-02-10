@@ -1,4 +1,3 @@
-/* 設定全局樣式 */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
@@ -9,7 +8,6 @@ body {
     margin: 0;
 }
 
-/* 卡片樣式 */
 .card {
     background: white;
     padding: 20px;
@@ -20,16 +18,14 @@ body {
     max-width: 90%;
 }
 
-/* 標題樣式 */
 h2 {
     color: #333;
     margin-bottom: 10px;
 }
 
-/* 輸入框樣式 */
 input {
     padding: 10px;
-    width: calc(100% - 20px); /* 保持統一寬度 */
+    width: calc(100% - 20px);
     border: 1px solid #ccc;
     border-radius: 5px;
     margin: 10px 0;
@@ -37,7 +33,6 @@ input {
     font-size: 14px;
 }
 
-/* 按鈕樣式 */
 button {
     padding: 10px 15px;
     background-color: #404040;
@@ -57,45 +52,19 @@ button:hover {
     border: 1px solid #404040;
 }
 
-/* 結果顯示區域 */
 #result, #verify_result {
     margin-top: 15px;
     font-size: 16px;
 }
 
-/* 訊息樣式 */
 p {
     font-size: 16px;
 }
 
-/* API Key 顯示樣式 */
-strong {
-    color: #28a745;
-}
-
-/* ✅ 讓 API Key 不會超出 Card，並可換行 */
-.api-key-container {
-    word-break: break-word;
-    overflow-wrap: break-word;
-    background: #f0f0f0;
-    padding: 10px;
-    border-radius: 5px;
-    display: inline-block;
-    text-align: center;
-    font-size: 14px;
-    max-width: 100%;
-}
-
-/* ✅ 讓 API Key 內文更清晰 */
-#api_key_display {
-    font-size: 12px;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    color: #007bff;
-    cursor: pointer;
-    display: block;
-    padding: 5px;
-    border-radius: 5px;
-    background: #eef7ff;
-    text-align: center;
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px; /* 新增間隙 */
+    margin-top: 20px;
 }
