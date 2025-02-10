@@ -24,9 +24,14 @@ def load_api_keys():
 
 
 def save_api_keys(api_keys):
+    if not isinstance(api_keys, dict):
+        logger.error("Failed to save API keys: Data format is not a dictionary.")
+        return
+
     with open(API_KEYS_FILE, "w") as f:
-        json.dump(api_keys, f, indent=4)
+        json.dump(api_keys, f, indent=4)  # 格式化輸出方便閱讀
     logger.info("API keys saved to file successfully.")
+
 
 def save_api_key_to_env(username, api_key):
     os.environ[f"API_KEY_{username}"] = api_key
@@ -47,26 +52,33 @@ def create_jwt_token(username):
 def create_api_user(username, password):
     api_keys = load_api_keys()
 
+    # 檢查使用者是否已存在
     if username in api_keys:
         logger.warning(f"Registration failed: User '{username}' already exists.")
         return {"error": "該使用者已註冊", "api_key": api_keys[username]["api_key"]}
 
+    # 產生新的 API 金鑰和 JWT Token
     api_key = secrets.token_hex(32)
     jwt_token = create_jwt_token(username)
 
-    # 保存 API 金鑰和密碼（實際應加密密碼，這裡僅作示範）
-    api_keys[username] = {
+    # 構建使用者資料，確保格式正確
+    user_data = {
         "api_key": api_key,
-        "password": password,  # 請改用雜氣儲存，如 bcrypt
+        "password": password,  # 實際使用應加密密碼，如 bcrypt
         "jwt_token": jwt_token
     }
 
+    # 寫入到 api_keys 字典中
+    api_keys[username] = user_data
+
+    # 儲存到環境變數和 JSON 檔案
     save_api_key_to_env(username, api_key)
     save_api_keys(api_keys)
 
-    # 將 JWT Token 寫入 token.txt 供前端下載
+    # 將 JWT Token 寫入本地檔案，供前端下載
     with open(f"{username}_token.txt", "w") as token_file:
-        token_file.write(jwt_token)
+        token_file.write(f"Username: {username}\nPassword: {password}\nJWT Token: {jwt_token}")
+
     logger.info(f"User '{username}' registered successfully with API key and JWT token.")
     return {"api_key": api_key, "jwt_token": jwt_token}
 

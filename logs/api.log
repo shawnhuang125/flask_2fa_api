@@ -1,0 +1,26 @@
+2025-02-10 21:01:58,137 - INFO - API_Logger - API keys loaded successfully from file.
+2025-02-10 21:01:58,138 - INFO - API_Logger - API keys saved to file successfully.
+2025-02-10 21:01:58,138 - INFO - API_Logger - API keys initialized from environment variables.
+2025-02-10 21:01:58,140 - INFO - API_Logger - Flask API server is starting up.
+2025-02-10 21:01:58,424 - INFO - API_Logger - API keys loaded successfully from file.
+2025-02-10 21:01:58,425 - INFO - API_Logger - API keys saved to file successfully.
+2025-02-10 21:01:58,425 - INFO - API_Logger - API keys initialized from environment variables.
+2025-02-10 21:01:58,427 - INFO - API_Logger - Flask API server is starting up.
+2025-02-10 21:02:08,355 - INFO - API_Logger - Incoming request: GET / from 192.168.0.231
+2025-02-10 21:02:08,355 - INFO - API_Logger - Homepage accessed from 192.168.0.231
+2025-02-10 21:02:08,357 - INFO - API_Logger - Flask API server is shutting down.
+2025-02-10 21:02:08,424 - INFO - API_Logger - Incoming request: GET /static/style.css from 192.168.0.231
+2025-02-10 21:02:08,455 - INFO - API_Logger - Flask API server is shutting down.
+2025-02-10 21:02:19,426 - INFO - API_Logger - Incoming request: POST /api/create_api_user from 192.168.0.231
+2025-02-10 21:02:19,426 - INFO - API_Logger - Received POST request on /api/create_api_user from 192.168.0.231
+2025-02-10 21:02:19,427 - INFO - API_Logger - API keys loaded successfully from file.
+2025-02-10 21:02:19,428 - INFO - API_Logger - JWT token created for user 'shawnhuang145'.
+2025-02-10 21:02:19,431 - INFO - API_Logger - API key for user 'shawnhuang145' saved to environment variables.
+2025-02-10 21:02:19,432 - INFO - API_Logger - API keys saved to file successfully.
+2025-02-10 21:02:19,432 - INFO - API_Logger - User 'shawnhuang145' registered successfully with API key and JWT token.
+2025-02-10 21:02:19,433 - INFO - API_Logger - User 'shawnhuang145' registered successfully.
+2025-02-10 21:02:19,433 - INFO - API_Logger - Flask API server is shutting down.
+2025-02-10 21:02:20,649 - INFO - API_Logger - Incoming request: GET /api/download_token/shawnhuang145 from 192.168.0.231
+2025-02-10 21:02:20,649 - INFO - API_Logger - Received GET request on /api/download_token/shawnhuang145 from 192.168.0.231
+2025-02-10 21:02:20,649 - INFO - API_Logger - Token file for user 'shawnhuang145' downloaded successfully.
+2025-02-10 21:02:20,660 - INFO - API_Logger - Flask API server is shutting down.
