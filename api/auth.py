@@ -55,7 +55,7 @@ def create_api_user(username, password):
     # 檢查使用者是否已存在
     if username in api_keys:
         logger.warning(f"Registration failed: User '{username}' already exists.")
-        return {"error": "該使用者已註冊", "api_key": api_keys[username]["api_key"]}
+        return {"error": "The User has Registered", "api_key": api_keys[username]["api_key"]}
 
     # 產生新的 API 金鑰和 JWT Token
     api_key = secrets.token_hex(32)
@@ -127,7 +127,7 @@ def verify_jwt_token(token):
         return {"valid": True, "username": decoded_token["username"]}
     except jwt.ExpiredSignatureError:
         logger.warning("JWT token verification failed: Token has expired.")
-        return {"valid": False, "error": "Token 已過期"}
+        return {"valid": False, "error": "Token is expire"}
     except jwt.InvalidTokenError:
         logger.warning("JWT token verification failed: Invalid token.")
-        return {"valid": False, "error": "無效的 Token"}
+        return {"valid": False, "error": "uknown Token"}

@@ -27,7 +27,7 @@ def register_api_user():
 
     if not username or not password:
         logger.warning(f"Failed registration attempt: Missing username or password from {request.remote_addr}")
-        return jsonify({"error": "請提供使用者名稱和密碼"}), 400
+        return jsonify({"error": "Please Provide Username And Password"}), 400
 
     response = create_api_user(username, password)
 
@@ -44,7 +44,7 @@ def register_api_user():
 
     # 保留原有註冊成功訊息，同時回傳 API Key 和 JWT Token 給前端
     return jsonify({
-        "message": "註冊成功",
+        "message": "Register Successful",
         "api_key": response["api_key"],
         "jwt_token": response["jwt_token"]
     }), 201
@@ -60,7 +60,7 @@ def download_token(username):
         logger.info(f"Token file for user '{username}' downloaded successfully.")
         return send_file(token_file, as_attachment=True)
     logger.warning(f"Token file for user '{username}' not found.")
-    return jsonify({"error": "找不到 Token 檔案"}), 404
+    return jsonify({"error": "Can Not Find Token File"}), 404
 
 @api_blueprint.route('/verify_key', methods=['GET'])
 def verify_key():
@@ -71,10 +71,10 @@ def verify_key():
 
     if verify_api_key(api_key):
         logger.info(f"API Key verification successful for key: {api_key}")
-        return jsonify({"message": "API Key 驗證成功"}), 200
+        return jsonify({"message": "API Key Verification Seccessful"}), 200
     else:
         logger.warning(f"API Key verification failed for key: {api_key}")
-        return jsonify({"error": "API Key 無效"}), 401
+        return jsonify({"error": "unknown API Key"}), 401
 
 
 
@@ -86,13 +86,13 @@ def verify_token():
     auth_header = request.headers.get('Authorization')
     if not auth_header or not auth_header.startswith('Bearer '):
         logger.warning(f"Token verification failed: No valid Authorization header from {request.remote_addr}")
-        return jsonify({"error": "請提供有效的 Authorization Bearer Token"}), 400
+        return jsonify({"error": "Please privide available Authorization Bearer Token"}), 400
 
     token = auth_header.split(" ")[1]  # 提取 Token
     result = verify_jwt_token(token)
 
     if result["valid"]:
-        return jsonify({"message": "JWT Token 驗證成功", "username": result["username"]}), 200
+        return jsonify({"message": "JWT Token Verification Seccessful", "username": result["username"]}), 200
     else:
         return jsonify({"error": result["error"]}), 401
     
@@ -108,4 +108,4 @@ def download_api_key(username):
         logger.info(f"API Key file for user '{username}' downloaded successfully.")
         return send_file(api_key_file, as_attachment=True)
     logger.warning(f"API Key file for user '{username}' not found.")
-    return jsonify({"error": "找不到 API Key 檔案"}), 404
+    return jsonify({"error": "Can Not Find Api Key File"}), 404
